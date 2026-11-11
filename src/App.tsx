@@ -20,6 +20,7 @@ const emailLabels: Partial<Record<Locale, string>> = {
   hi: "मुझे ईमेल करें",
   ur: "مجھے ای میل کریں",
   bn: "ইমেইলে যোগাযোগ করুন",
+  uz: "Menga elektron xat yozing",
 };
 
 type RouteUiText = {
@@ -47,6 +48,7 @@ const routeUiText: Partial<Record<Locale, RouteUiText>> = {
   hi: { footerNavigation: "फ़ुटर नेविगेशन", home: "मुखपृष्ठ", aiSolutions: "AI समाधान", blog: "ब्लॉग", backToTop: "ऊपर जाएँ", seoEyebrow: "AI मार्गदर्शन", requestDemo: "डेमो माँगें", viewHomepage: "मुखपृष्ठ देखें", pageSummary: "पृष्ठ सारांश", focus: "मुख्य विषय", faqEyebrow: "अक्सर पूछे जाने वाले प्रश्न", businessQuestions: "व्यवसायों के आम सवाल", relatedEyebrow: "संबंधित पृष्ठ", moreGuidance: "और उपयोगी जानकारी", relatedPage: "पृष्ठ" },
   ur: { footerNavigation: "فٹر نیویگیشن", home: "صفحۂ اول", aiSolutions: "AI حل", blog: "بلاگ", backToTop: "اوپر جائیں", seoEyebrow: "AI رہنمائی", requestDemo: "ڈیمو کی درخواست کریں", viewHomepage: "صفحۂ اول دیکھیں", pageSummary: "صفحے کا خلاصہ", focus: "موضوع", faqEyebrow: "اکثر پوچھے گئے سوالات", businessQuestions: "کاروباروں کے عام سوالات", relatedEyebrow: "متعلقہ صفحات", moreGuidance: "مزید مفید رہنمائی", relatedPage: "صفحہ" },
   bn: { footerNavigation: "ফুটার নেভিগেশন", home: "হোম", aiSolutions: "AI সমাধান", blog: "ব্লগ", backToTop: "উপরে ফিরুন", seoEyebrow: "AI নির্দেশিকা", requestDemo: "ডেমোর অনুরোধ করুন", viewHomepage: "হোমপেজ দেখুন", pageSummary: "পৃষ্ঠার সারাংশ", focus: "বিষয়", faqEyebrow: "সাধারণ প্রশ্ন", businessQuestions: "ব্যবসায়ীদের সাধারণ প্রশ্ন", relatedEyebrow: "সম্পর্কিত পৃষ্ঠা", moreGuidance: "আরও সহায়ক নির্দেশিকা", relatedPage: "পৃষ্ঠা" },
+  uz: { footerNavigation: "Pastki qism navigatsiyasi", home: "Bosh sahifa", aiSolutions: "AI yechimlari", blog: "Blog", backToTop: "Yuqoriga qaytish", seoEyebrow: "AI bo‘yicha qo‘llanma", requestDemo: "Demo so‘rash", viewHomepage: "Bosh sahifani ko‘rish", pageSummary: "Sahifa qisqacha mazmuni", focus: "Asosiy mavzu", faqEyebrow: "Ko‘p so‘raladigan savollar", businessQuestions: "Bizneslar tez-tez beradigan savollar", relatedEyebrow: "Tegishli sahifalar", moreGuidance: "Qo‘shimcha foydali ma’lumotlar", relatedPage: "Sahifa" },
 };
 
 function getRouteUiText(locale: Locale) {
