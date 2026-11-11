@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { getLocale, localeNames, locales, rtlLocales, type Locale } from "./content";
+import { useEffect, useRef, useState } from "react";
+import { getInitialLocale, getLocalizedPathname, localeNames, locales, PREFERRED_LOCALE_KEY, rtlLocales, type Locale } from "./content";
 import { presentation } from "./presentation";
 import PatternCanvas from "./PatternCanvas";
 import { SITE_URL } from "./site";
@@ -12,6 +12,46 @@ const CONTACTS = {
   website: "https://propivotal.uk/",
   phone: "tel:+818050709373",
 };
+
+const emailLabels: Partial<Record<Locale, string>> = {
+  en: "Email Me",
+  ja: "メールで連絡",
+  ar: "راسلني عبر البريد الإلكتروني",
+  hi: "मुझे ईमेल करें",
+  ur: "مجھے ای میل کریں",
+  bn: "ইমেইলে যোগাযোগ করুন",
+};
+
+type RouteUiText = {
+  footerNavigation: string;
+  home: string;
+  aiSolutions: string;
+  blog: string;
+  backToTop: string;
+  seoEyebrow: string;
+  requestDemo: string;
+  viewHomepage: string;
+  pageSummary: string;
+  focus: string;
+  faqEyebrow: string;
+  businessQuestions: string;
+  relatedEyebrow: string;
+  moreGuidance: string;
+  relatedPage: string;
+};
+
+const routeUiText: Partial<Record<Locale, RouteUiText>> = {
+  en: { footerNavigation: "Footer navigation", home: "Home", aiSolutions: "AI solutions", blog: "Blog", backToTop: "Back to top", seoEyebrow: "AI guidance", requestDemo: "Request a demo", viewHomepage: "View homepage", pageSummary: "Page summary", focus: "Focus", faqEyebrow: "FAQ", businessQuestions: "Questions businesses often ask", relatedEyebrow: "Related pages", moreGuidance: "More helpful guidance", relatedPage: "Page" },
+  ja: { footerNavigation: "フッターナビゲーション", home: "ホーム", aiSolutions: "AIソリューション", blog: "ブログ", backToTop: "ページの先頭へ", seoEyebrow: "AI活用ガイド", requestDemo: "デモを申し込む", viewHomepage: "ホームページを見る", pageSummary: "ページの概要", focus: "テーマ", faqEyebrow: "よくある質問", businessQuestions: "事業者からよく寄せられる質問", relatedEyebrow: "関連ページ", moreGuidance: "さらに詳しいガイド", relatedPage: "ページ" },
+  ar: { footerNavigation: "روابط تذييل الصفحة", home: "الرئيسية", aiSolutions: "حلول الذكاء الاصطناعي", blog: "المدونة", backToTop: "العودة إلى الأعلى", seoEyebrow: "إرشادات الذكاء الاصطناعي", requestDemo: "اطلبوا عرضاً توضيحياً", viewHomepage: "عرض الصفحة الرئيسية", pageSummary: "ملخص الصفحة", focus: "الموضوع", faqEyebrow: "الأسئلة الشائعة", businessQuestions: "أسئلة تطرحها الشركات كثيراً", relatedEyebrow: "صفحات ذات صلة", moreGuidance: "مزيد من الإرشادات المفيدة", relatedPage: "صفحة" },
+  hi: { footerNavigation: "फ़ुटर नेविगेशन", home: "मुखपृष्ठ", aiSolutions: "AI समाधान", blog: "ब्लॉग", backToTop: "ऊपर जाएँ", seoEyebrow: "AI मार्गदर्शन", requestDemo: "डेमो माँगें", viewHomepage: "मुखपृष्ठ देखें", pageSummary: "पृष्ठ सारांश", focus: "मुख्य विषय", faqEyebrow: "अक्सर पूछे जाने वाले प्रश्न", businessQuestions: "व्यवसायों के आम सवाल", relatedEyebrow: "संबंधित पृष्ठ", moreGuidance: "और उपयोगी जानकारी", relatedPage: "पृष्ठ" },
+  ur: { footerNavigation: "فٹر نیویگیشن", home: "صفحۂ اول", aiSolutions: "AI حل", blog: "بلاگ", backToTop: "اوپر جائیں", seoEyebrow: "AI رہنمائی", requestDemo: "ڈیمو کی درخواست کریں", viewHomepage: "صفحۂ اول دیکھیں", pageSummary: "صفحے کا خلاصہ", focus: "موضوع", faqEyebrow: "اکثر پوچھے گئے سوالات", businessQuestions: "کاروباروں کے عام سوالات", relatedEyebrow: "متعلقہ صفحات", moreGuidance: "مزید مفید رہنمائی", relatedPage: "صفحہ" },
+  bn: { footerNavigation: "ফুটার নেভিগেশন", home: "হোম", aiSolutions: "AI সমাধান", blog: "ব্লগ", backToTop: "উপরে ফিরুন", seoEyebrow: "AI নির্দেশিকা", requestDemo: "ডেমোর অনুরোধ করুন", viewHomepage: "হোমপেজ দেখুন", pageSummary: "পৃষ্ঠার সারাংশ", focus: "বিষয়", faqEyebrow: "সাধারণ প্রশ্ন", businessQuestions: "ব্যবসায়ীদের সাধারণ প্রশ্ন", relatedEyebrow: "সম্পর্কিত পৃষ্ঠা", moreGuidance: "আরও সহায়ক নির্দেশিকা", relatedPage: "পৃষ্ঠা" },
+};
+
+function getRouteUiText(locale: Locale) {
+  return routeUiText[locale] ?? routeUiText.en!;
+}
 
 type IconName = "whatsapp" | "line" | "email" | "website" | "phone" | "arrow" | "spark";
 
@@ -28,21 +68,12 @@ function Icon({ name }: { name: IconName }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-function LanguageSelect({ locale }: { locale: Locale }) {
+function LanguageSelect({ locale, onLocaleChange }: { locale: Locale; onLocaleChange: (locale: Locale) => void }) {
   const copy = presentation[locale];
-  const changeLanguage = (nextLocale: Locale) => {
-    const visibleSection = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"))
-      .find((section) => {
-        const bounds = section.getBoundingClientRect();
-        return bounds.top <= window.innerHeight * 0.35 && bounds.bottom > window.innerHeight * 0.35;
-      });
-    const fragment = visibleSection ? `#${visibleSection.id}` : window.location.hash;
-    window.location.assign(`/${nextLocale}/${fragment}`);
-  };
   return (
     <label className="language-select">
       <span className="sr-only">{copy.languageLabel}</span>
-      <select value={locale} onChange={(event) => changeLanguage(event.target.value as Locale)} aria-label={copy.languageLabel}>
+      <select value={locale} onChange={(event) => onLocaleChange(event.target.value as Locale)} aria-label={copy.languageLabel}>
         {locales.map((language) => <option key={language} value={language}>{localeNames[language]}</option>)}
       </select>
       <span aria-hidden="true" className="select-chevron">⌄</span>
@@ -55,7 +86,7 @@ function ContactActions({ locale, compact = false }: { locale: Locale; compact?:
   const actions: { key: IconName; href: string; label: string; className: string; detail?: string }[] = [
     { key: "whatsapp", href: CONTACTS.whatsapp, label: copy.whatsappButton, detail: copy.phoneNumber, className: "action-whatsapp" },
     { key: "line", href: CONTACTS.line, label: copy.lineButton, className: "action-line" },
-    { key: "email", href: CONTACTS.email, label: "Email Me", detail: "ariankhan7282@gmail.com", className: "action-email" },
+    { key: "email", href: CONTACTS.email, label: emailLabels[locale] ?? emailLabels.en!, detail: "ariankhan7282@gmail.com", className: "action-email" },
     { key: "website", href: CONTACTS.website, label: copy.websiteButton, className: "action-website" },
     { key: "phone", href: CONTACTS.phone, label: copy.phoneButton, detail: copy.phoneNumber, className: "action-phone" },
   ];
@@ -80,7 +111,7 @@ function ContactActions({ locale, compact = false }: { locale: Locale; compact?:
   );
 }
 
-function SiteHeader({ locale }: { locale: Locale }) {
+function SiteHeader({ locale, onLocaleChange }: { locale: Locale; onLocaleChange: (locale: Locale) => void }) {
   const copy = presentation[locale];
   return (
     <header className="site-header">
@@ -94,7 +125,7 @@ function SiteHeader({ locale }: { locale: Locale }) {
       <div className="header-actions">
         <a className="header-contact header-whatsapp" href={CONTACTS.whatsapp}><Icon name="whatsapp" /><span>{copy.whatsapp}</span></a>
         <a className="header-contact header-line" href={CONTACTS.line}><Icon name="line" /><span>{copy.line}</span></a>
-        <LanguageSelect locale={locale} />
+        <LanguageSelect locale={locale} onLocaleChange={onLocaleChange} />
       </div>
     </header>
   );
@@ -102,6 +133,7 @@ function SiteHeader({ locale }: { locale: Locale }) {
 
 function SiteFooter({ locale }: { locale: Locale }) {
   const copy = presentation[locale];
+  const labels = getRouteUiText(locale);
   return (
     <footer className="site-footer">
       <div className="footer-brand company-brand">
@@ -112,12 +144,12 @@ function SiteFooter({ locale }: { locale: Locale }) {
         </span>
       </div>
       <p>{copy.companyName}</p>
-      <nav className="footer-links" aria-label="Footer navigation">
-        <a href={`/${locale === "en" ? "" : `${locale}/`}`}>Home</a>
-        <a href={`/${locale === "en" ? "" : `${locale}/`}ai-solutions-for-muslim-businesses`}>AI Solutions</a>
-        <a href={`/${locale === "en" ? "" : `${locale}/`}blog`}>Blog</a>
+      <nav className="footer-links" aria-label={labels.footerNavigation}>
+        <a href={`/${locale === "en" ? "" : `${locale}/`}`}>{labels.home}</a>
+        <a href={`/${locale === "en" ? "" : `${locale}/`}ai-solutions-for-muslim-businesses`}>{labels.aiSolutions}</a>
+        <a href={`/${locale === "en" ? "" : `${locale}/`}blog`}>{labels.blog}</a>
       </nav>
-      <a className="back-top" href={`/${locale === "en" ? "" : `${locale}/`}#top`} aria-label="Back to top"><Icon name="arrow" /></a>
+      <a className="back-top" href={`/${locale === "en" ? "" : `${locale}/`}#top`} aria-label={labels.backToTop}><Icon name="arrow" /></a>
       <span className="footer-copyright">© {new Date().getFullYear()} Propivotal Solutions</span>
     </footer>
   );
@@ -128,21 +160,20 @@ function getResolvedSeoPage(locale: Locale, route?: string) {
   const withoutTrailingSlash = pathName.replace(/\/+$/, "") || "/";
   const segments = withoutTrailingSlash.split("/").filter(Boolean);
 
-  let activeLocale = locale;
   let slug = "";
 
   if (segments[0] && locales.includes(segments[0] as Locale)) {
-    activeLocale = segments[0] as Locale;
     slug = segments.slice(1).join("/");
   } else {
     slug = segments.join("/");
   }
 
   const page = seoPageRoutes.find((entry) => entry.slug === slug) ?? null;
-  return { locale: activeLocale, page, path: slug };
+  return { locale, page, path: slug };
 }
 
-function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes)[number] }) {
+function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (typeof seoPageRoutes)[number]; onLocaleChange: (locale: Locale) => void }) {
+  const labels = getRouteUiText(locale);
   const canonical = `${SITE_URL}/${locale === "en" ? "" : `${locale}/`}${page.slug}`;
   const faqSchema = page.faqs.map((faq) => ({
     "@type": "Question",
@@ -176,20 +207,20 @@ function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes
 
   return (
     <div className="site-shell seo-page-shell" id="top" data-locale={locale}>
-      <SiteHeader locale={locale} />
+      <SiteHeader locale={locale} onLocaleChange={onLocaleChange} />
       <main className="seo-page-main">
         <section className="seo-hero section-pad">
           <div className="seo-hero-copy">
-            <span className="eyebrow">SEO landing page</span>
+            <span className="eyebrow">{labels.seoEyebrow}</span>
             <h1>{page.h1}</h1>
             <p>{page.intro}</p>
             <div className="hero-actions">
-              <a className="button button-primary" href={`/${locale === "en" ? "" : `${locale}/`}#contact`}>Request a demo</a>
-              <a className="button button-quiet" href={`/${locale === "en" ? "" : `${locale}/`}`}>View homepage</a>
+              <a className="button button-primary" href={`/${locale === "en" ? "" : `${locale}/`}#contact`}>{labels.requestDemo}</a>
+              <a className="button button-quiet" href={`/${locale === "en" ? "" : `${locale}/`}`}>{labels.viewHomepage}</a>
             </div>
           </div>
-          <div className="seo-hero-card" aria-label="Page summary">
-            <span className="seo-card-label">Focus</span>
+          <div className="seo-hero-card" aria-label={labels.pageSummary}>
+            <span className="seo-card-label">{labels.focus}</span>
             <strong>{page.title}</strong>
             <p>{page.description}</p>
             <img src="/images/geometric-arch.jpg" alt="Abstract geometric design representing AI search and customer support solutions for businesses" />
@@ -215,8 +246,8 @@ function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes
 
         <section className="seo-faq section-pad" aria-labelledby="related-faq-heading">
           <div className="faq-heading">
-            <span className="eyebrow">FAQ</span>
-            <h2 id="related-faq-heading">Questions businesses often ask</h2>
+            <span className="eyebrow">{labels.faqEyebrow}</span>
+            <h2 id="related-faq-heading">{labels.businessQuestions}</h2>
           </div>
           <div className="faq-list">
             {page.faqs.map((faq, index) => (
@@ -234,13 +265,13 @@ function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes
 
         <section className="seo-related section-pad" aria-labelledby="related-pages-heading">
           <div className="faq-heading">
-            <span className="eyebrow">Related pages</span>
-            <h2 id="related-pages-heading">More helpful guidance</h2>
+            <span className="eyebrow">{labels.relatedEyebrow}</span>
+            <h2 id="related-pages-heading">{labels.moreGuidance}</h2>
           </div>
           <div className="related-grid">
             {page.related.map((item) => (
               <a className="related-card" href={`/${locale === "en" ? "" : `${locale}/`}${item.slug}`} key={item.slug}>
-                <span className="related-kicker">Page</span>
+                <span className="related-kicker">{labels.relatedPage}</span>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </a>
@@ -255,12 +286,24 @@ function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes
 
 export { seoPageRoutes };
 
-function App({ locale = getLocale(), route }: { locale?: Locale; route?: string }) {
-  const { locale: activeLocale, page } = getResolvedSeoPage(locale, route);
+function App({ locale, route }: { locale?: Locale; route?: string }) {
+  const [selectedLocale, setSelectedLocale] = useState(() => locale ?? getInitialLocale(route));
+  const { locale: activeLocale, page } = getResolvedSeoPage(selectedLocale, route);
   const copy = presentation[activeLocale];
   const isRtl = rtlLocales.includes(activeLocale);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const pageUrl = `${SITE_URL}/${activeLocale === "en" ? "" : `${activeLocale}/`}`;
+  const changeLocale = (nextLocale: Locale) => {
+    try {
+      window.localStorage.setItem(PREFERRED_LOCALE_KEY, nextLocale);
+    } catch {
+      // The current selection still applies when storage is unavailable.
+    }
+
+    const localizedPath = getLocalizedPathname(window.location.pathname, nextLocale);
+    window.history.replaceState(window.history.state, "", `${localizedPath}${window.location.search}${window.location.hash}`);
+    setSelectedLocale(nextLocale);
+  };
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -354,12 +397,12 @@ function App({ locale = getLocale(), route }: { locale?: Locale; route?: string 
   }, [activeLocale, copy, isRtl, page, pageUrl]);
 
   if (page) {
-    return <SeoPage locale={activeLocale} page={page} />;
+    return <SeoPage locale={activeLocale} page={page} onLocaleChange={changeLocale} />;
   }
 
   return (
     <div className="site-shell" id="top" data-locale={activeLocale}>
-      <SiteHeader locale={activeLocale} />
+      <SiteHeader locale={activeLocale} onLocaleChange={changeLocale} />
 
       <main>
         <section className="hero" aria-labelledby="hero-title">
@@ -435,12 +478,12 @@ function App({ locale = getLocale(), route }: { locale?: Locale; route?: string 
             </div>
             <span className="demo-company">{copy.companyName}</span>
           </div>
-          <ContactActions locale={locale} />
+          <ContactActions locale={activeLocale} />
         </section>
       </main>
 
       <footer className="site-footer">
-        <a className="company-brand footer-company-brand" href={`/${locale}/`}>
+        <a className="company-brand footer-company-brand" href={`/${activeLocale === "en" ? "" : `${activeLocale}/`}`}>
           <span className="brand-mark">M</span>
           <span className="company-brand-copy">
             <span className="company-brand-name">{copy.brandName}</span>

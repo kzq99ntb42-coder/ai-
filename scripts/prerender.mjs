@@ -48,7 +48,6 @@ try {
   }
   await writeFile(`${root}/dist/index.html`, renderPage("en"));
   await writeFile(`${root}/dist/_redirects`, [
-    "/ /en/ 302",
     ...locales.map((locale) => `/${locale} /${locale}/ 301`),
     "",
   ].join("\n"));

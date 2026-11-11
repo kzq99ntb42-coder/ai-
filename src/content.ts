@@ -621,7 +621,48 @@ export const content: Partial<Record<Locale, Content>> = {
   },
 };
 
-export function getLocale(pathname = window.location.pathname): Locale {
+export const PREFERRED_LOCALE_KEY = "muslim-chat-bots.locale";
+
+function getPathLocale(pathname: string): Locale | null {
   const firstSegment = pathname.split("/").filter(Boolean)[0];
-  return locales.includes(firstSegment as Locale) ? (firstSegment as Locale) : "en";
+  return locales.includes(firstSegment as Locale) ? (firstSegment as Locale) : null;
+}
+
+export function getLocale(pathname = typeof window === "undefined" ? "/" : window.location.pathname): Locale {
+  return getPathLocale(pathname) ?? "en";
+}
+
+export function getInitialLocale(
+  pathname = typeof window === "undefined" ? "/" : window.location.pathname,
+  languagePreferences: readonly string[] = typeof navigator === "undefined"
+    ? []
+    : navigator.languages.length > 0
+      ? navigator.languages
+      : [navigator.language],
+): Locale {
+  const pathLocale = getPathLocale(pathname);
+  if (pathLocale) return pathLocale;
+
+  try {
+    const savedLocale = typeof window === "undefined" ? null : window.localStorage.getItem(PREFERRED_LOCALE_KEY);
+    if (savedLocale && locales.includes(savedLocale as Locale)) return savedLocale as Locale;
+  } catch {
+    // Storage may be unavailable in private browsing; browser language still works.
+  }
+
+  for (const language of languagePreferences) {
+    const baseLanguage = language.trim().toLowerCase().split(/[-_]/, 1)[0];
+    if (locales.includes(baseLanguage as Locale)) return baseLanguage as Locale;
+  }
+
+  return "en";
+}
+
+export function getLocalizedPathname(pathname: string, locale: Locale): string {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments[0] && locales.includes(segments[0] as Locale)) segments.shift();
+
+  const localizedSegments = locale === "en" ? segments : [locale, ...segments];
+  const localizedPath = `/${localizedSegments.join("/")}`;
+  return pathname.endsWith("/") && localizedPath !== "/" ? `${localizedPath}/` : localizedPath;
 }
