@@ -312,11 +312,11 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    const source = video?.querySelector("source");
+    if (!video || !source) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) {
-      video.pause();
       return;
     }
 
@@ -324,13 +324,20 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-          video.play().catch(() => undefined);
-        } else {
+          if (!source.src && source.dataset.src) {
+            source.src = source.dataset.src;
+            video.preload = "auto";
+            video.load();
+          }
+          video.play().catch((error: unknown) => {
+            if (error instanceof DOMException && error.name === "AbortError") return;
+            console.error("紹介動画を再生できませんでした。", error);
+          });
+        } else if (!video.paused) {
           video.pause();
-          video.currentTime = 0;
         }
       },
-      { threshold: 0.2 },
+      { threshold: 0.1 },
     );
 
     observer.observe(video);
@@ -398,10 +405,10 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
               poster="/images/geometric-arch.jpg"
             >
-              <source src="/videos/hero-video.mp4" type="video/mp4" />
+              <source data-src="/videos/hero-video.mp4" type="video/mp4" />
             </video>
           </div>
           <div className="about-copy">
