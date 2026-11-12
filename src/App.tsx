@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { getInitialLocale, getLocalizedPathname, localeNames, locales, PREFERRED_LOCALE_KEY, rtlLocales, type Locale } from "./content";
+import { useEffect, useRef } from "react";
+import { getInitialLocale, locales, type Locale } from "./content";
 import { presentation } from "./presentation";
 import PatternCanvas from "./PatternCanvas";
 import { SITE_URL } from "./site";
@@ -11,16 +11,6 @@ const CONTACTS = {
   email: "mailto:ariankhan7282@gmail.com",
   website: "https://propivotal.uk/",
   phone: "tel:+818050709373",
-};
-
-const emailLabels: Partial<Record<Locale, string>> = {
-  en: "Email Me",
-  ja: "メールで連絡",
-  ar: "راسلني عبر البريد الإلكتروني",
-  hi: "मुझे ईमेल करें",
-  ur: "مجھے ای میل کریں",
-  bn: "ইমেইলে যোগাযোগ করুন",
-  uz: "Menga elektron xat yozing",
 };
 
 type RouteUiText = {
@@ -41,18 +31,26 @@ type RouteUiText = {
   relatedPage: string;
 };
 
-const routeUiText: Partial<Record<Locale, RouteUiText>> = {
-  en: { footerNavigation: "Footer navigation", home: "Home", aiSolutions: "AI solutions", blog: "Blog", backToTop: "Back to top", seoEyebrow: "AI guidance", requestDemo: "Request a demo", viewHomepage: "View homepage", pageSummary: "Page summary", focus: "Focus", faqEyebrow: "FAQ", businessQuestions: "Questions businesses often ask", relatedEyebrow: "Related pages", moreGuidance: "More helpful guidance", relatedPage: "Page" },
-  ja: { footerNavigation: "フッターナビゲーション", home: "ホーム", aiSolutions: "AIソリューション", blog: "ブログ", backToTop: "ページの先頭へ", seoEyebrow: "AI活用ガイド", requestDemo: "デモを申し込む", viewHomepage: "ホームページを見る", pageSummary: "ページの概要", focus: "テーマ", faqEyebrow: "よくある質問", businessQuestions: "事業者からよく寄せられる質問", relatedEyebrow: "関連ページ", moreGuidance: "さらに詳しいガイド", relatedPage: "ページ" },
-  ar: { footerNavigation: "روابط تذييل الصفحة", home: "الرئيسية", aiSolutions: "حلول الذكاء الاصطناعي", blog: "المدونة", backToTop: "العودة إلى الأعلى", seoEyebrow: "إرشادات الذكاء الاصطناعي", requestDemo: "اطلبوا عرضاً توضيحياً", viewHomepage: "عرض الصفحة الرئيسية", pageSummary: "ملخص الصفحة", focus: "الموضوع", faqEyebrow: "الأسئلة الشائعة", businessQuestions: "أسئلة تطرحها الشركات كثيراً", relatedEyebrow: "صفحات ذات صلة", moreGuidance: "مزيد من الإرشادات المفيدة", relatedPage: "صفحة" },
-  hi: { footerNavigation: "फ़ुटर नेविगेशन", home: "मुखपृष्ठ", aiSolutions: "AI समाधान", blog: "ब्लॉग", backToTop: "ऊपर जाएँ", seoEyebrow: "AI मार्गदर्शन", requestDemo: "डेमो माँगें", viewHomepage: "मुखपृष्ठ देखें", pageSummary: "पृष्ठ सारांश", focus: "मुख्य विषय", faqEyebrow: "अक्सर पूछे जाने वाले प्रश्न", businessQuestions: "व्यवसायों के आम सवाल", relatedEyebrow: "संबंधित पृष्ठ", moreGuidance: "और उपयोगी जानकारी", relatedPage: "पृष्ठ" },
-  ur: { footerNavigation: "فٹر نیویگیشن", home: "صفحۂ اول", aiSolutions: "AI حل", blog: "بلاگ", backToTop: "اوپر جائیں", seoEyebrow: "AI رہنمائی", requestDemo: "ڈیمو کی درخواست کریں", viewHomepage: "صفحۂ اول دیکھیں", pageSummary: "صفحے کا خلاصہ", focus: "موضوع", faqEyebrow: "اکثر پوچھے گئے سوالات", businessQuestions: "کاروباروں کے عام سوالات", relatedEyebrow: "متعلقہ صفحات", moreGuidance: "مزید مفید رہنمائی", relatedPage: "صفحہ" },
-  bn: { footerNavigation: "ফুটার নেভিগেশন", home: "হোম", aiSolutions: "AI সমাধান", blog: "ব্লগ", backToTop: "উপরে ফিরুন", seoEyebrow: "AI নির্দেশিকা", requestDemo: "ডেমোর অনুরোধ করুন", viewHomepage: "হোমপেজ দেখুন", pageSummary: "পৃষ্ঠার সারাংশ", focus: "বিষয়", faqEyebrow: "সাধারণ প্রশ্ন", businessQuestions: "ব্যবসায়ীদের সাধারণ প্রশ্ন", relatedEyebrow: "সম্পর্কিত পৃষ্ঠা", moreGuidance: "আরও সহায়ক নির্দেশিকা", relatedPage: "পৃষ্ঠা" },
-  uz: { footerNavigation: "Pastki qism navigatsiyasi", home: "Bosh sahifa", aiSolutions: "AI yechimlari", blog: "Blog", backToTop: "Yuqoriga qaytish", seoEyebrow: "AI bo‘yicha qo‘llanma", requestDemo: "Demo so‘rash", viewHomepage: "Bosh sahifani ko‘rish", pageSummary: "Sahifa qisqacha mazmuni", focus: "Asosiy mavzu", faqEyebrow: "Ko‘p so‘raladigan savollar", businessQuestions: "Bizneslar tez-tez beradigan savollar", relatedEyebrow: "Tegishli sahifalar", moreGuidance: "Qo‘shimcha foydali ma’lumotlar", relatedPage: "Sahifa" },
+const routeUiText: RouteUiText = {
+  footerNavigation: "フッターナビゲーション",
+  home: "ホーム",
+  aiSolutions: "人工知能活用",
+  blog: "ブログ",
+  backToTop: "ページの先頭へ",
+  seoEyebrow: "人工知能活用ガイド",
+  requestDemo: "デモを申し込む",
+  viewHomepage: "ホームを見る",
+  pageSummary: "ページの概要",
+  focus: "テーマ",
+  faqEyebrow: "よくある質問",
+  businessQuestions: "事業者からよく寄せられる質問",
+  relatedEyebrow: "関連ページ",
+  moreGuidance: "さらに詳しいガイド",
+  relatedPage: "ページ",
 };
 
-function getRouteUiText(locale: Locale) {
-  return routeUiText[locale] ?? routeUiText.en!;
+function getRouteUiText(_locale: Locale) {
+  return routeUiText;
 }
 
 type IconName = "whatsapp" | "line" | "email" | "website" | "phone" | "arrow" | "spark";
@@ -70,25 +68,12 @@ function Icon({ name }: { name: IconName }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-function LanguageSelect({ locale, onLocaleChange }: { locale: Locale; onLocaleChange: (locale: Locale) => void }) {
-  const copy = presentation[locale];
-  return (
-    <label className="language-select">
-      <span className="sr-only">{copy.languageLabel}</span>
-      <select value={locale} onChange={(event) => onLocaleChange(event.target.value as Locale)} aria-label={copy.languageLabel}>
-        {locales.map((language) => <option key={language} value={language}>{localeNames[language]}</option>)}
-      </select>
-      <span aria-hidden="true" className="select-chevron">⌄</span>
-    </label>
-  );
-}
-
 function ContactActions({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
   const copy = presentation[locale];
   const actions: { key: IconName; href: string; label: string; className: string; detail?: string }[] = [
     { key: "whatsapp", href: CONTACTS.whatsapp, label: copy.whatsappButton, detail: copy.phoneNumber, className: "action-whatsapp" },
     { key: "line", href: CONTACTS.line, label: copy.lineButton, className: "action-line" },
-    { key: "email", href: CONTACTS.email, label: emailLabels[locale] ?? emailLabels.en!, detail: "ariankhan7282@gmail.com", className: "action-email" },
+    { key: "email", href: CONTACTS.email, label: "メールで相談", detail: "ariankhan7282@gmail.com", className: "action-email" },
     { key: "website", href: CONTACTS.website, label: copy.websiteButton, className: "action-website" },
     { key: "phone", href: CONTACTS.phone, label: copy.phoneButton, detail: copy.phoneNumber, className: "action-phone" },
   ];
@@ -113,21 +98,20 @@ function ContactActions({ locale, compact = false }: { locale: Locale; compact?:
   );
 }
 
-function SiteHeader({ locale, onLocaleChange }: { locale: Locale; onLocaleChange: (locale: Locale) => void }) {
+function SiteHeader({ locale }: { locale: Locale }) {
   const copy = presentation[locale];
   return (
     <header className="site-header">
-      <a className="company-brand" href={`/${locale === "en" ? "" : `${locale}/`}`} aria-label={`${copy.brandName} — ${copy.brandSubtitle}`}>
-        <span className="brand-mark">M</span>
+      <a className="company-brand" href="/" aria-label={`${copy.brandName} — ${copy.brandSubtitle}`}>
+        <span className="brand-mark">ム</span>
         <span className="company-brand-copy">
           <span className="company-brand-name">{copy.brandName}</span>
           <span className="company-brand-initiative">{copy.brandSubtitle}</span>
         </span>
       </a>
       <div className="header-actions">
-        <a className="header-contact header-whatsapp" href={CONTACTS.whatsapp}><Icon name="whatsapp" /><span>{copy.whatsapp}</span></a>
-        <a className="header-contact header-line" href={CONTACTS.line}><Icon name="line" /><span>{copy.line}</span></a>
-        <LanguageSelect locale={locale} onLocaleChange={onLocaleChange} />
+        <a className="header-contact header-whatsapp" href={CONTACTS.whatsapp} aria-label={`${copy.whatsapp}でお問い合わせ`}><Icon name="whatsapp" /><span>{copy.whatsapp}</span></a>
+        <a className="header-contact header-line" href={CONTACTS.line} aria-label={`${copy.line}でお問い合わせ`}><Icon name="line" /><span>{copy.line}</span></a>
       </div>
     </header>
   );
@@ -139,7 +123,7 @@ function SiteFooter({ locale }: { locale: Locale }) {
   return (
     <footer className="site-footer">
       <div className="footer-brand company-brand">
-        <span className="brand-mark">M</span>
+        <span className="brand-mark">ム</span>
         <span className="company-brand-copy">
           <span className="company-brand-name">{copy.brandName}</span>
           <span className="company-brand-initiative">{copy.brandSubtitle}</span>
@@ -147,12 +131,12 @@ function SiteFooter({ locale }: { locale: Locale }) {
       </div>
       <p>{copy.companyName}</p>
       <nav className="footer-links" aria-label={labels.footerNavigation}>
-        <a href={`/${locale === "en" ? "" : `${locale}/`}`}>{labels.home}</a>
-        <a href={`/${locale === "en" ? "" : `${locale}/`}ai-solutions-for-muslim-businesses`}>{labels.aiSolutions}</a>
-        <a href={`/${locale === "en" ? "" : `${locale}/`}blog`}>{labels.blog}</a>
+        <a href="/">{labels.home}</a>
+        <a href="/ai-solutions-for-muslim-businesses">{labels.aiSolutions}</a>
+        <a href="/blog">{labels.blog}</a>
       </nav>
-      <a className="back-top" href={`/${locale === "en" ? "" : `${locale}/`}#top`} aria-label={labels.backToTop}><Icon name="arrow" /></a>
-      <span className="footer-copyright">© {new Date().getFullYear()} Propivotal Solutions</span>
+      <a className="back-top" href="/#top" aria-label={labels.backToTop}><Icon name="arrow" /></a>
+      <span className="footer-copyright">© {new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric" }).format(new Date())} {copy.companyName}</span>
     </footer>
   );
 }
@@ -174,9 +158,9 @@ function getResolvedSeoPage(locale: Locale, route?: string) {
   return { locale, page, path: slug };
 }
 
-function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (typeof seoPageRoutes)[number]; onLocaleChange: (locale: Locale) => void }) {
+function SeoPage({ locale, page }: { locale: Locale; page: (typeof seoPageRoutes)[number] }) {
   const labels = getRouteUiText(locale);
-  const canonical = `${SITE_URL}/${locale === "en" ? "" : `${locale}/`}${page.slug}`;
+  const canonical = `${SITE_URL}/${page.slug}`;
   const faqSchema = page.faqs.map((faq) => ({
     "@type": "Question",
     name: faq.question,
@@ -196,9 +180,10 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
         url: canonical,
         provider: {
           "@type": "Organization",
-          name: "Propivotal Solutions",
+          name: "プロピボタル・ソリューション",
           url: "https://propivotal.uk/",
         },
+        areaServed: { "@type": "Country", name: "日本" },
       },
       {
         "@type": "FAQPage",
@@ -209,7 +194,7 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
 
   return (
     <div className="site-shell seo-page-shell" id="top" data-locale={locale}>
-      <SiteHeader locale={locale} onLocaleChange={onLocaleChange} />
+      <SiteHeader locale={locale} />
       <main className="seo-page-main">
         <section className="seo-hero section-pad">
           <div className="seo-hero-copy">
@@ -217,15 +202,15 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
             <h1>{page.h1}</h1>
             <p>{page.intro}</p>
             <div className="hero-actions">
-              <a className="button button-primary" href={`/${locale === "en" ? "" : `${locale}/`}#contact`}>{labels.requestDemo}</a>
-              <a className="button button-quiet" href={`/${locale === "en" ? "" : `${locale}/`}`}>{labels.viewHomepage}</a>
+              <a className="button button-primary" href="/#demo">{labels.requestDemo}</a>
+              <a className="button button-quiet" href="/">{labels.viewHomepage}</a>
             </div>
           </div>
           <div className="seo-hero-card" aria-label={labels.pageSummary}>
             <span className="seo-card-label">{labels.focus}</span>
             <strong>{page.title}</strong>
             <p>{page.description}</p>
-            <img src="/images/geometric-arch.jpg" alt="Abstract geometric design representing AI search and customer support solutions for businesses" />
+            <img src="/images/geometric-arch.jpg" alt="事業者向け人工知能活用と顧客サポートをイメージした幾何学模様" />
           </div>
         </section>
 
@@ -255,7 +240,7 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
             {page.faqs.map((faq, index) => (
               <details className="faq-item" key={faq.question} open={index === 0}>
                 <summary>
-                  <span className="faq-index">Q{index + 1}</span>
+                  <span className="faq-index">問{index + 1}</span>
                   <span>{faq.question}</span>
                   <span className="faq-plus">+</span>
                 </summary>
@@ -272,7 +257,7 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
           </div>
           <div className="related-grid">
             {page.related.map((item) => (
-              <a className="related-card" href={`/${locale === "en" ? "" : `${locale}/`}${item.slug}`} key={item.slug}>
+              <a className="related-card" href={`/${item.slug}`} key={item.slug}>
                 <span className="related-kicker">{labels.relatedPage}</span>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
@@ -288,24 +273,12 @@ function SeoPage({ locale, page, onLocaleChange }: { locale: Locale; page: (type
 
 export { seoPageRoutes };
 
-function App({ locale, route }: { locale?: Locale; route?: string }) {
-  const [selectedLocale, setSelectedLocale] = useState(() => locale ?? getInitialLocale(route));
-  const { locale: activeLocale, page } = getResolvedSeoPage(selectedLocale, route);
+function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: string }) {
+  const activeLocale = locale;
+  const { page } = getResolvedSeoPage(activeLocale, route);
   const copy = presentation[activeLocale];
-  const isRtl = rtlLocales.includes(activeLocale);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const pageUrl = `${SITE_URL}/${activeLocale === "en" ? "" : `${activeLocale}/`}`;
-  const changeLocale = (nextLocale: Locale) => {
-    try {
-      window.localStorage.setItem(PREFERRED_LOCALE_KEY, nextLocale);
-    } catch {
-      // The current selection still applies when storage is unavailable.
-    }
-
-    const localizedPath = getLocalizedPathname(window.location.pathname, nextLocale);
-    window.history.replaceState(window.history.state, "", `${localizedPath}${window.location.search}${window.location.hash}`);
-    setSelectedLocale(nextLocale);
-  };
+  const pageUrl = `${SITE_URL}/`;
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -318,19 +291,21 @@ function App({ locale, route }: { locale?: Locale; route?: string }) {
         telephone: "+818050709373",
         contactPoint: {
           "@type": "ContactPoint",
-          contactType: "sales",
+          contactType: "営業",
           email: "ariankhan7282@gmail.com",
           telephone: "+818050709373",
-          availableLanguage: ["English", "Arabic", "Japanese", "Urdu", "Hindi", "Indonesian", "Malay", "Turkish", "French"],
+          availableLanguage: ["ja"],
+          areaServed: { "@type": "Country", name: "日本" },
         },
       },
       {
         "@type": "Service",
         name: copy.brandName,
-        serviceType: "AI chatbot and website assistant setup",
+        serviceType: "人工知能チャットボットおよびウェブサイトアシスタントの導入支援",
         url: pageUrl,
         provider: { "@id": `${SITE_URL}/#organization` },
-        audience: { "@type": "Audience", audienceType: "Businesses, including Muslim-owned businesses" },
+        areaServed: { "@type": "Country", name: "日本" },
+        audience: { "@type": "Audience", audienceType: "日本国内のムスリム事業者を含む事業者" },
       },
     ],
   };
@@ -365,10 +340,10 @@ function App({ locale, route }: { locale?: Locale; route?: string }) {
   useEffect(() => {
     const pageMetaTitle = page ? page.title : copy.seoTitle;
     const pageMetaDescription = page ? page.description : copy.seoDescription;
-    const canonicalUrl = page ? `${SITE_URL}/${activeLocale === "en" ? "" : `${activeLocale}/`}${page.slug}` : pageUrl;
+    const canonicalUrl = page ? `${SITE_URL}/${page.slug}` : pageUrl;
 
     document.documentElement.lang = activeLocale;
-    document.documentElement.dir = isRtl ? "rtl" : "ltr";
+    document.documentElement.dir = "ltr";
     document.title = pageMetaTitle;
 
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
@@ -378,33 +353,20 @@ function App({ locale, route }: { locale?: Locale; route?: string }) {
     canonical.rel = "canonical";
     canonical.href = canonicalUrl;
     if (!canonical.parentNode) document.head.append(canonical);
-    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
-    locales.forEach((language) => {
-      const alternate = document.createElement("link");
-      alternate.rel = "alternate";
-      alternate.hreflang = language;
-      alternate.href = `${SITE_URL}/${language}/`;
-      document.head.append(alternate);
-    });
-    const defaultLanguage = document.createElement("link");
-    defaultLanguage.rel = "alternate";
-    defaultLanguage.hreflang = "x-default";
-    defaultLanguage.href = `${SITE_URL}/en/`;
-    document.head.append(defaultLanguage);
     description?.setAttribute("content", pageMetaDescription);
     socialTitle?.setAttribute("content", pageMetaTitle);
     socialDescription?.setAttribute("content", pageMetaDescription);
     document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.setAttribute("content", canonicalUrl);
-    document.querySelector<HTMLMetaElement>('meta[property="og:locale"]')?.setAttribute("content", activeLocale.replace("-", "_"));
-  }, [activeLocale, copy, isRtl, page, pageUrl]);
+    document.querySelector<HTMLMetaElement>('meta[property="og:locale"]')?.setAttribute("content", "ja_JP");
+  }, [activeLocale, copy, page, pageUrl]);
 
   if (page) {
-    return <SeoPage locale={activeLocale} page={page} onLocaleChange={changeLocale} />;
+    return <SeoPage locale={activeLocale} page={page} />;
   }
 
   return (
     <div className="site-shell" id="top" data-locale={activeLocale}>
-      <SiteHeader locale={activeLocale} onLocaleChange={changeLocale} />
+      <SiteHeader locale={activeLocale} />
 
       <main>
         <section className="hero" aria-labelledby="hero-title">
@@ -485,15 +447,15 @@ function App({ locale, route }: { locale?: Locale; route?: string }) {
       </main>
 
       <footer className="site-footer">
-        <a className="company-brand footer-company-brand" href={`/${activeLocale === "en" ? "" : `${activeLocale}/`}`}>
-          <span className="brand-mark">M</span>
+        <a className="company-brand footer-company-brand" href="/">
+          <span className="brand-mark">ム</span>
           <span className="company-brand-copy">
             <span className="company-brand-name">{copy.brandName}</span>
             <span className="company-brand-initiative">{copy.brandSubtitle}</span>
           </span>
         </a>
         <p>{copy.footerLine}</p>
-        <span className="footer-copyright">© {new Date().getFullYear()} {copy.companyName}</span>
+        <span className="footer-copyright">© {new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric" }).format(new Date())} {copy.companyName}</span>
       </footer>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />

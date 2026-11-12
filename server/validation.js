@@ -6,6 +6,18 @@ export function sanitizeText(value) {
   return value.replace(/\s+/g, " ").trim();
 }
 
+export function escapeHtml(value) {
+  const htmlEntities = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+
+  return value.replace(/[&<>"']/g, (character) => htmlEntities[character]);
+}
+
 export function validateContactSubmission(rawBody = {}) {
   const name = sanitizeText(rawBody.name);
   const company = sanitizeText(rawBody.company);
@@ -16,32 +28,32 @@ export function validateContactSubmission(rawBody = {}) {
   const errors = {};
 
   if (honeypot) {
-    errors.honeypot = "Spam detected.";
+    errors.honeypot = "送信内容を確認できませんでした。";
   }
 
   if (!name) {
-    errors.name = "Your name is required.";
+    errors.name = "お名前を入力してください。";
   } else if (name.length < 2 || name.length > 100) {
-    errors.name = "Name must be between 2 and 100 characters.";
+    errors.name = "お名前は2文字以上100文字以内で入力してください。";
   }
 
   if (!company) {
-    errors.company = "Company name is required.";
+    errors.company = "会社名を入力してください。";
   } else if (company.length < 2 || company.length > 120) {
-    errors.company = "Company name must be between 2 and 120 characters.";
+    errors.company = "会社名は2文字以上120文字以内で入力してください。";
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email) {
-    errors.email = "Email address is required.";
+    errors.email = "メールアドレスを入力してください。";
   } else if (!emailPattern.test(email) || email.length > 254) {
-    errors.email = "Please provide a valid email address.";
+    errors.email = "有効なメールアドレスを入力してください。";
   }
 
   if (!message) {
-    errors.message = "Your message is required.";
+    errors.message = "お問い合わせ内容を入力してください。";
   } else if (message.length < 10 || message.length > 5000) {
-    errors.message = "Message must be between 10 and 5000 characters.";
+    errors.message = "お問い合わせ内容は10文字以上5000文字以内で入力してください。";
   }
 
   return {

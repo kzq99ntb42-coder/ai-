@@ -20,509 +20,250 @@ export type SeoPageRoute = {
   }>;
 };
 
+const page = (
+  slug: string,
+  title: string,
+  description: string,
+  h1: string,
+  intro: string,
+  sections: SeoPageRoute["sections"],
+  faqs: SeoPageRoute["faqs"],
+  related: SeoPageRoute["related"],
+): SeoPageRoute => ({ slug, title, description, h1, intro, sections, faqs, related });
+
 export const seoPageRoutes: SeoPageRoute[] = [
-  {
-    slug: "ai-solutions-for-muslim-businesses",
-    title: "AI Solutions for Muslim Businesses | Propivotal Solutions",
-    description:
-      "Discover practical AI solutions for Muslim businesses, including multilingual chatbots, 24/7 customer support, and automations for halal restaurants, shops, and service businesses.",
-    h1: "AI solutions for Muslim businesses that support growth and better customer service",
-    intro:
-      "Muslim-owned businesses often need a digital experience that is both culturally aware and commercially effective. AI solutions can help teams answer enquiries faster, guide visitors through services, and deliver a more helpful experience across website and messaging channels.",
-    sections: [
+  page(
+    "ai-solutions-for-muslim-businesses",
+    "ムスリム事業者向け人工知能活用｜プロピボタル・ソリューション",
+    "多言語チャットボット、問い合わせ対応、業務の自動化など、ムスリム事業者に役立つ人工知能活用方法をご紹介します。",
+    "成長と顧客対応を支える、ムスリム事業者向け人工知能活用",
+    "ムスリム事業者には、文化への配慮と事業上の実用性を両立したデジタル体験が求められます。人工知能を活用すれば、問い合わせへの回答を早め、サービスを案内し、ウェブサイトやメッセージでの応対をより分かりやすくできます。",
+    [
       {
-        heading: "Why Muslim businesses adopt AI",
+        heading: "ムスリム事業者が人工知能を活用する理由",
         text: [
-          "Many small businesses need to reply to frequent questions about services, order timing, halal status, pricing, or appointment availability without slowing down staff.",
-          "AI website assistants can manage those conversations in a professional tone, reduce repetitive admin work, and keep customer support available even outside business hours.",
+          "多くの事業者は、スタッフの負担を増やさずに、サービス、注文時期、ハラール対応、料金、予約状況などの質問に繰り返し答える必要があります。",
+          "人工知能アシスタントは、丁寧な応対を保ちながら定型業務を減らし、営業時間外も問い合わせを受け付けられるよう支援します。",
         ],
-        bullets: [
-          "Respond to common enquiries instantly",
-          "Share clear service information 24/7",
-          "Reduce missed opportunities from slow replies",
-          "Support multiple languages for diverse customer bases",
-        ],
+        bullets: ["よくある質問にすばやく回答", "サービス情報をいつでも案内", "返信の遅れによる機会損失を軽減", "多様なお客様に合わせた複数言語での対応"],
       },
       {
-        heading: "Common use cases",
+        heading: "代表的な活用方法",
         text: [
-          "A business might use AI to guide visitors to the right service, answer questions about opening hours, explain product details, or collect contact information for follow-up.",
-          "For Muslim businesses, this can be especially useful where customers may ask about halal standards, business values, or pricing in multiple languages.",
+          "訪問者に適切なサービスを案内する、営業時間や商品について説明する、折り返し連絡に必要な情報を受け取るなど、さまざまな用途があります。",
+          "ハラール基準、事業の理念、料金などについて、複数の言語で質問を受ける事業者にも役立ちます。",
         ],
-        bullets: [
-          "Lead capture and appointment booking",
-          "Service explanations and FAQs",
-          "Product recommendations and support flows",
-          "Multilingual website conversations",
-        ],
+        bullets: ["見込み客情報の取得と予約受付", "サービスの説明とよくある質問への回答", "商品案内と購入サポート", "複数言語でのウェブサイト対応"],
       },
       {
-        heading: "A practical deployment approach",
+        heading: "無理のない導入方法",
         text: [
-          "The best AI implementations start with the most repetitive customer questions and expand from there. A business can begin with a small website assistant, then gradually add handoff to a human team when a conversation needs more context or a real person.",
-          "This creates a reliable customer experience without over-automating the parts of the business that still need human care.",
+          "まず問い合わせの多い質問への対応から始め、必要に応じて機能を広げる方法が効果的です。小規模なウェブアシスタントから導入し、より詳しい説明や人の判断が必要な場合にスタッフへ引き継げるようにできます。",
+          "人による配慮が必要な業務を自動化しすぎず、安定した顧客体験を目指します。",
         ],
       },
     ],
-    faqs: [
+    [
+      { question: "どのようなムスリム事業者が利用できますか？", answer: "飲食店、店舗、サービス業、診療所、教育事業、専門サービスなど、問い合わせ対応を効率化したい事業者に活用できます。" },
+      { question: "人工知能アシスタントはスタッフの代わりになりますか？", answer: "いいえ。よくある質問への回答や問い合わせ情報の整理を支援し、複雑な相談はスタッフへ引き継ぐことで、業務を補助するものです。" },
+      { question: "複数の言語に対応できますか？", answer: "設定や提供する情報に応じて複数の言語に対応できます。利用可能な言語は導入前にご確認ください。" },
+    ],
+    [
+      { slug: "ai-chatbots-for-halal-restaurants", title: "ハラール飲食店向けチャットボット", description: "メニュー、予約、サービスに関する質問への対応を支援します。" },
+      { slug: "multilingual-ai-website-assistants", title: "複数言語対応のウェブ人工知能アシスタント", description: "さまざまなお客様に分かりやすい案内を届ける方法をご紹介します。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "顧客対応や問い合わせの整理、業務効率化について解説します。" },
+    ],
+  ),
+  page(
+    "ai-chatbots-for-halal-restaurants",
+    "ハラール飲食店向け人工知能チャットボット｜プロピボタル・ソリューション",
+    "メニューの質問、予約の受付、営業時間外の問い合わせ対応など、ハラール飲食店でのチャットボット活用をご紹介します。",
+    "スタッフの負担を抑え、接客を支えるハラール飲食店向け人工知能チャットボット",
+    "ハラール飲食店では、来店、オンライン注文、メニューに関する問い合わせ、食材や営業時間、場所の確認など、さまざまな対応が必要です。チャットボットが素早く情報を案内することで、スタッフは調理や接客に集中できます。",
+    [
       {
-        question: "What kind of Muslim businesses can use AI chatbots?",
-        answer:
-          "They can support halal restaurants, shops, service providers, clinics, education businesses, and professional service firms that want faster customer responses and more structured enquiries.",
+        heading: "飲食店向けチャットボットでできること",
+        text: ["ハラール認証、メニュー、アレルギー情報、配達地域、営業時間、予約方法などの質問に回答できます。", "営業時間を問わず情報を確認できるため、お店を比較しているお客様にも役立ちます。"],
+        bullets: ["メニューや食材に関する質問への回答", "予約や問い合わせの受付", "注文方法の案内", "所在地や営業時間の案内"],
       },
       {
-        question: "Do AI assistants replace staff?",
-        answer:
-          "No. They are designed to reduce repetitive tasks and support staff by answering common questions, collecting leads, and routing more complex conversations to a human team.",
+        heading: "お客様からの信頼につながる対応",
+        text: ["飲食店では、明確で親しみやすい案内が大切です。ハラール対応や食事制限について正確な情報を伝え、必要に応じてスタッフへ引き継げます。", "混雑時のやり取りを円滑にし、ご家族やグループが安心してお店を選べるよう支援します。"],
       },
       {
-        question: "Can a chatbot support multiple languages?",
-        answer:
-          "Yes. Multilingual website assistants can help businesses serve customers in English, Arabic, Malay, Urdu, French, Japanese, and other languages depending on the setup and content available.",
+        heading: "導入時のポイント",
+        text: ["まずはよくある質問への回答から始め、複雑な相談は店長や接客スタッフへ引き継ぐ方法を用意します。", "お店の雰囲気に合った、役立ち、正確で一貫性のある案内を目指せます。"],
       },
     ],
-    related: [
+    [
+      { question: "予約に関する問い合わせも受け付けられますか？", answer: "はい。日付、時間、人数、連絡先などを受け取り、スタッフへ共有したり、設定に応じて予約手続きにつなげたりできます。" },
+      { question: "大規模な飲食店だけに役立つサービスですか？", answer: "いいえ。小規模・中規模の飲食店でも、返信の迅速化や問い合わせの取りこぼし防止、情報の統一に活用できます。" },
+      { question: "複数の言語に対応する必要がありますか？", answer: "地域のお客様や旅行者など、さまざまな方が利用する場合に役立ちます。対応言語は設定内容により異なります。" },
+    ],
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "事業や業務を支援する人工知能の活用方法を幅広くご紹介します。" },
+      { slug: "ai-customer-support-for-small-businesses", title: "中小事業者向け人工知能顧客サポート", description: "限られた人数で問い合わせに対応する方法を解説します。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "顧客対応や問い合わせの整理に役立つ機能をご紹介します。" },
+    ],
+  ),
+  page(
+    "ai-assistants-for-muslim-shops",
+    "ムスリム経営の店舗向け人工知能アシスタント｜プロピボタル・ソリューション",
+    "商品案内や問い合わせ対応を支援し、日々の手作業を抑える店舗向け人工知能アシスタントをご紹介します。",
+    "顧客体験と購入検討を支援する、ムスリム経営の店舗向け人工知能アシスタント",
+    "ムスリム経営の店舗では、商品説明や繰り返し寄せられる質問への回答、購入相談への対応が必要です。人工知能アシスタントは、少人数のチームに負担をかけず、訪問者へ分かりやすく丁寧に案内します。",
+    [
       {
-        slug: "ai-chatbots-for-halal-restaurants",
-        title: "AI Chatbots for Halal Restaurants",
-        description: "How restaurants can use AI to answer menu, booking, and service questions around the clock.",
+        heading: "小売業務を支える人工知能",
+        text: ["在庫、価格、配送、商品の適合性などの質問対応には時間がかかります。人工知能アシスタントなら必要な情報をすばやく案内し、折り返し連絡用の情報も受け取れます。", "担当者が忙しいときにも購入検討を支援し、お客様をお待たせする可能性を減らします。"],
+        bullets: ["商品や在庫について案内", "サービスや配送方法の説明", "折り返し連絡に必要な情報の取得", "情報が分かりやすい買い物体験の提供"],
       },
       {
-        slug: "multilingual-ai-website-assistants",
-        title: "Multilingual AI Website Assistants",
-        description: "How multilingual assistants improve accessibility, trust, and customer support for diverse audiences.",
+        heading: "地域の店舗での活用例",
+        text: ["商品の比較、カスタマイズ、信頼できるおすすめについて相談するお客様に、整理された情報を提供できます。購入前の確認をスムーズに進められます。", "販売対応を効率化しながら、お客様との信頼関係を大切にできます。"],
       },
       {
-        slug: "how-ai-chatbots-help-businesses",
-        title: "How AI Chatbots Help Businesses",
-        description: "A practical guide to customer service, lead qualification, and automation for busy teams.",
+        heading: "接客を大切にした設計",
+        text: ["優れたアシスタントは機械的な印象を与えず、店舗の雰囲気に合った、親切で明確な案内を行います。自動化そのものではなく、確かな顧客体験を重視します。"],
       },
     ],
-  },
-  {
-    slug: "ai-chatbots-for-halal-restaurants",
-    title: "AI Chatbots for Halal Restaurants | Propivotal Solutions",
-    description:
-      "Learn how AI chatbots help halal restaurants answer menu questions, collect reservations, and support customers outside normal business hours.",
-    h1: "AI chatbots for halal restaurants that improve service without adding pressure to staff",
-    intro:
-      "Halal restaurants often handle a mix of walk-ins, online orders, menu enquiries, and customer questions about ingredients, operations, and locations. A chatbot can help visitors get quick answers while staff focus on food preparation and guest care.",
-    sections: [
+    [
+      { question: "営業時間外もお客様をサポートできますか？", answer: "はい。夜間や混雑時によくある質問に回答し、担当者が対応可能になった際に必要な情報を引き継げます。" },
+      { question: "売上の向上につながりますか？", answer: "適切な商品案内や購入時の疑問への回答、見込み客情報の整理を通じて、販売機会を支援できます。" },
+      { question: "小規模な店舗にも向いていますか？", answer: "はい。大規模なサポート体制を設けずに、一貫した顧客対応を行いたい小規模事業者にも活用できます。" },
+    ],
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "業務、顧客対応、事業成長に役立つ人工知能をご紹介します。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "チャットボットが事業にもたらす実用的な効果を解説します。" },
+      { slug: "ai-customer-support-for-small-businesses", title: "中小事業者向け人工知能顧客サポート", description: "少人数のチームで顧客対応を行う方法をご紹介します。" },
+    ],
+  ),
+  page(
+    "ai-customer-support-for-small-businesses",
+    "中小事業者向け人工知能顧客サポート｜プロピボタル・ソリューション",
+    "問い合わせへの迅速な回答や事務作業の軽減、安定した顧客対応に役立つ人工知能顧客サポートをご紹介します。",
+    "迅速で分かりやすい連絡を実現する、中小事業者向け人工知能顧客サポート",
+    "中小事業者は、お客様の期待が高まる一方で、対応できる人数が限られています。人工知能顧客サポートは、よくある質問への回答や問い合わせ情報の取得、次の手続きの案内を通じて、その差を埋めるお手伝いをします。",
+    [
       {
-        heading: "What a restaurant chatbot can do",
-        text: [
-          "AI assistants can answer questions about halal certification status, menu items, allergens, delivery areas, opening times, and booking details.",
-          "They also help customers who are deciding between venues by making a restaurant’s information easier to find and understand at any time of day.",
-        ],
-        bullets: [
-          "Answer menu and ingredient questions", 
-          "Collect reservations and enquiries",
-          "Guide customers to the right order flow",
-          "Share location and opening-hour details",
-        ],
+        heading: "少人数のチームが直面する課題",
+        text: ["スタッフが電話中、接客中、または不在のときに問い合わせが重なり、返信の遅れや機会損失につながることがあります。", "顧客サポートアシスタントは、営業時間、商品情報、料金、見積もり依頼などの定型的な質問にすぐ回答できます。"],
+        bullets: ["よくある質問にすばやく回答", "返信の遅れや機会損失を軽減", "営業担当者への引き継ぎ前に相談内容を整理", "お客様への丁寧な初回応対"],
       },
       {
-        heading: "Why it matters for customer trust",
-        text: [
-          "A clear and friendly response matters in hospitality. If a customer wants information about halal compliance or dietary suitability, an AI assistant can provide accurate information quickly and route them to a real person if needed.",
-          "This reduces friction during busy periods and helps families or groups make confident decisions about where to eat.",
-        ],
+        heading: "サポートチームにとっての利点",
+        text: ["人工知能は質の高い接客に取って代わるのではなく、人の判断が必要な会話にスタッフが集中できるよう支援します。対応品質を保ちながら、運営コストの急増を避けたい事業者にも役立ちます。"],
       },
       {
-        heading: "Best practices",
-        text: [
-          "Restaurants usually see the best results when they start with a small set of FAQs and a clear handoff to a manager or front-of-house team for more complex issues.",
-          "This keeps the experience helpful, accurate, and consistent with the brand.",
-        ],
+        heading: "現実的な導入の進め方",
+        text: ["問い合わせの多い内容を絞り、正確で分かりやすい会話を設計することが重要です。実際のお客様の質問を見ながら、段階的に対象を広げられます。"],
       },
     ],
-    faqs: [
+    [
+      { question: "大企業でなくても人工知能顧客サポートを利用できますか？", answer: "はい。大規模なサポートチームを設けずに、返信の速さや一貫性を高めたい中小事業者にも役立ちます。" },
+      { question: "スタッフへ引き継ぐことはできますか？", answer: "はい。複雑な問い合わせや個別対応が必要な相談を、これまでのやり取りとともにスタッフへ引き継げます。" },
+      { question: "見込み客の獲得にも役立ちますか？", answer: "はい。連絡先や相談内容を受け取り、必要な情報を整理して、販売やサービスの次の手続きへ案内できます。" },
+    ],
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "サービス、業務、事業成長を支援する人工知能の活用方法です。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "人工知能チャットボットでできることと活用時のポイントを解説します。" },
+      { slug: "multilingual-ai-website-assistants", title: "複数言語対応のウェブ人工知能アシスタント", description: "複数の言語を使うお客様への案内方法をご紹介します。" },
+    ],
+  ),
+  page(
+    "multilingual-ai-website-assistants",
+    "複数言語対応のウェブ人工知能アシスタント｜プロピボタル・ソリューション",
+    "複数言語での案内を支援し、お客様からの問い合わせに一貫して対応するウェブ人工知能アシスタントをご紹介します。",
+    "多様なお客様に対応する、複数言語対応のウェブ人工知能アシスタント",
+    "さまざまな方にサービスを提供する事業者にとって、複数の言語ですばやく案内することは簡単ではありません。ウェブ人工知能アシスタントを活用すれば、お客様が使いやすい言語で情報を案内し、丁寧な応対を保てます。",
+    [
       {
-        question: "Can a restaurant chatbot handle booking enquiries?",
-        answer:
-          "Yes, it can collect basic details such as date, time, group size, and contact details, then pass the information to the team or trigger a booking flow if configured.",
+        heading: "複数言語でのサポートが大切な理由",
+        text: ["お客様は、最も理解しやすい言語でウェブサイトを閲覧したり問い合わせたりします。その言語で情報を得られないと、信頼を損ねたり、問い合わせを諦めたりする可能性があります。", "人工知能アシスタントは、すべての質問にスタッフが手作業で回答することなく、複数の言語で一貫した案内を行えるよう支援します。"],
+        bullets: ["お客様が使いやすい言語で案内", "海外からの訪問者や複数言語を使う方の信頼向上", "スタッフの対応負担を軽減", "ウェブサイトでの問い合わせを分かりやすく案内"],
       },
       {
-        question: "Is this only useful for large restaurants?",
-        answer:
-          "No. Small and medium-sized restaurants can also benefit from faster responses, fewer missed enquiries, and more consistent information across the website and social channels.",
+        heading: "活用が期待できる場面",
+        text: ["地域のコミュニティ、ご家族、海外のお客様に対応し、商品、サービス、ハラール基準、予約方法などを案内する事業者に役立ちます。", "単に翻訳するだけでなく、情報の正確さと実用性を保つことが重要です。"],
       },
       {
-        question: "Does the chatbot need to speak multiple languages?",
-        answer:
-          "It can be useful if the restaurant serves diverse communities. Multilingual support is often especially valuable for families, tourists, and international guests.",
+        heading: "使いやすい多言語設計",
+        text: ["優れたアシスタントには、分かりやすい言語切り替え、正確なサービス情報、人の対応が必要な質問を引き継ぐ仕組みが欠かせません。", "複雑な会話での混乱を減らし、洗練された顧客体験につなげます。"],
       },
     ],
-    related: [
+    [
+      { question: "どの言語に対応できますか？", answer: "利用できる言語は提供する情報や設定によって異なります。具体的な対応言語は導入前にご確認ください。" },
+      { question: "翻訳するだけで十分ですか？", answer: "必ずしもそうではありません。役立つ案内には、地域の事情、よくある質問、サービスの内容を踏まえた設計も必要です。" },
+      { question: "販売や問い合わせの受付にも使えますか？", answer: "はい。訪問者への案内、連絡先の取得、担当者が確認するための相談内容の整理に活用できます。" },
+    ],
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "ムスリム事業者における人工知能活用の全体像をご紹介します。" },
+      { slug: "ai-chatbots-for-halal-restaurants", title: "ハラール飲食店向けチャットボット", description: "さまざまなお客様への案内を、より明確で効率的に行う方法です。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "チャットボット導入や業務自動化を検討する際のポイントです。" },
+    ],
+  ),
+  page(
+    "how-ai-chatbots-help-businesses",
+    "人工知能チャットボットの事業活用｜プロピボタル・ソリューション",
+    "顧客サポートの改善、繰り返し作業の軽減、質の高い問い合わせの獲得に役立つ人工知能チャットボットをご紹介します。",
+    "顧客対応と業務効率を高める人工知能チャットボット",
+    "人工知能チャットボットは、何でも解決する近道ではありません。一方で、定型的な質問へ迅速かつ一貫して対応する助けになります。実際のお客様のニーズとスタッフの業務に合わせて設計することが大切です。",
+    [
       {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "A broader overview of how AI can support Muslim-owned businesses across services and operations.",
+        heading: "最初の回答をすばやく",
+        text: ["ウェブサイトを訪れたりメッセージを送ったりしたお客様は、早い返信を期待することがあります。スタッフが忙しいときや不在のときでも、チャットボットはよくある質問にすぐ回答できます。", "担当者が返信する前に見込み客が離れてしまう可能性を減らし、顧客体験の向上につなげます。"],
+        bullets: ["頻繁に寄せられる質問に回答", "営業時間外もウェブサイトで案内", "折り返し対応に必要な情報の取得", "返信内容の一貫性向上"],
       },
       {
-        slug: "ai-customer-support-for-small-businesses",
-        title: "AI Customer Support for Small Businesses",
-        description: "How AI can support service teams with faster responses and clearer customer journeys.",
+        heading: "チームの負担を抑えた顧客対応",
+        text: ["定型作業を減らすことで、スタッフは複雑な相談や、より価値の高い業務に集中できます。不要な負担を増やさず、仕組みを整えたい小規模・成長中の事業者にも適しています。"],
       },
       {
-        slug: "multilingual-ai-website-assistants",
-        title: "Multilingual AI Website Assistants",
-        description: "Support customers in multiple languages without requiring a large support team.",
+        heading: "事業に合わせて段階的に活用",
+        text: ["すべてのやり取りを人から置き換えるのではなく、分かりやすく役立つサポートを設けることが重要です。問い合わせ対応を円滑にし、スタッフがその後の対応を進めやすくします。"],
       },
     ],
-  },
-  {
-    slug: "ai-assistants-for-muslim-shops",
-    title: "AI Assistants for Muslim Shops | Propivotal Solutions",
-    description:
-      "See how AI assistants help Muslim shops answer customer enquiries, present products, and improve service without adding more manual work.",
-    h1: "AI assistants for Muslim shops that improve customer experience and conversion",
-    intro:
-      "Muslim shops often need to explain products, answer repeated questions, and keep sales conversations moving without overwhelming a small team. AI assistants can help by giving visitors quick, helpful answers while keeping the brand tone professional and warm.",
-    sections: [
+    [
+      { question: "すべての事業に人工知能チャットボットが向いていますか？", answer: "繰り返し寄せられる質問がある、問い合わせを獲得したい、迅速な対応が役立つ事業に適しています。事業の規模や複雑さに合わせて設計できます。" },
+      { question: "顧客サポートの代わりになりますか？", answer: "いいえ。よくある質問に対応し、必要な場合は複雑な相談をスタッフへ引き継ぐサポート役として活用できます。" },
+      { question: "導入にはどのくらいかかりますか？", answer: "事業内容、提供情報、業務の複雑さによって異なります。まず問い合わせの多い質問や重要な顧客対応から始める方法があります。" },
+    ],
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "ムスリム事業者における人工知能活用の出発点となる情報です。" },
+      { slug: "ai-customer-support-for-small-businesses", title: "中小事業者向け人工知能顧客サポート", description: "少人数のチームで対応品質や返信速度を高める方法です。" },
+      { slug: "ai-assistants-for-muslim-shops", title: "ムスリム経営の店舗向け人工知能アシスタント", description: "店舗や小売業の顧客対応を支援する方法をご紹介します。" },
+    ],
+  ),
+  page(
+    "blog",
+    "ムスリム事業者向け人工知能・事業運営ガイド｜プロピボタル・ソリューション",
+    "人工知能、顧客対応、事業運営に関する実用的な情報を、ムスリム事業者やハラール飲食店、中小事業者向けにご紹介します。",
+    "ムスリム事業者の人工知能活用と事業成長に役立つ情報",
+    "このページでは、人工知能、顧客サポート、デジタルでの情報発信、サービス設計に関する実用的な情報をご紹介します。誇張や安易な解決策に頼らず、事業者がより良い判断を行えるよう支援します。",
+    [
       {
-        heading: "Where AI helps retail teams",
-        text: [
-          "Retail teams often lose time answering repetitive questions about availability, pricing, shipping, or product suitability. A well-designed assistant can give that information instantly and collect customer details for follow-up.",
-          "This can improve the buying journey and reduce the risk of losing a customer when a team member is busy or unavailable.",
-        ],
-        bullets: [
-          "Answer product and stock questions",
-          "Explain services and delivery options",
-          "Capture leads for follow-up",
-          "Support a friendly, information-rich shopping experience",
-        ],
+        heading: "ご紹介する内容",
+        text: ["人工知能の導入、顧客体験、オンラインでの情報発信、サービス運営について、分かりやすく実践的な情報をお届けします。", "少人数のチームが複雑な仕組みを増やさずに返信を早めるための、具体的な検討事項も取り上げます。"],
+        bullets: ["サービス業での人工知能活用", "オンラインでの顧客体験の改善", "検索で見つけてもらうための事業情報の整備", "少人数のチームを支えるツール"],
       },
       {
-        heading: "A useful use case for local businesses",
-        text: [
-          "Many Muslim shops serve customers who are comparing products, asking about customisation, or looking for trusted recommendations. AI can help present those answers in a structured way and reduce friction before a purchase decision is made.",
-          "That can preserve trust while keeping the sales process responsive and well organised.",
-        ],
+        heading: "記事のテーマ例",
+        text: ["人工知能チャットボットによる問い合わせ対応、多言語アシスタントによる顧客の安心感、ハラール事業者が分かりやすいサービス情報を提供する方法などを扱います。", "検索順位だけを目的にした量産ではなく、お客様が本当に知りたいことを重視します。"],
       },
       {
-        heading: "Keep it service-focused",
-        text: [
-          "The best assistants do not feel robotic. They are designed to feel helpful, clear, and aligned with the shop’s style. This matters because customers want a reliable experience, not just automation for automation’s sake.",
-        ],
+        heading: "継続できる情報発信",
+        text: ["事業に役立つ情報は、具体的で、分かりやすく、読みやすいことが大切です。役立つ記事を適切な頻度で公開し、内容を更新しながら、事業者が実際に抱える疑問に答えていきます。"],
       },
     ],
-    faqs: [
-      {
-        question: "Can an AI assistant support customers after hours?",
-        answer:
-          "Yes. It can answer common questions at night or during busy periods, then pass on details to the team when someone is available.",
-      },
-      {
-        question: "Will this help increase sales?",
-        answer:
-          "It can help by guiding buyers to the right product, answering objections, and supporting a more consistent lead qualification process.",
-      },
-      {
-        question: "Is it suitable for a small shop?",
-        answer:
-          "Yes. Small businesses often benefit from AI because they need a consistent customer experience without hiring a large support team.",
-      },
+    [
+      { question: "事業者に役立つ記事とはどのようなものですか？", answer: "人工知能ツール、顧客体験、多言語対応、サービス運営などの実務的な疑問に、過度な約束をせず答える記事です。" },
+      { question: "どのくらいの頻度で更新すべきですか？", answer: "質の低い記事を大量に公開するより、無理のない頻度で役立つ情報を継続して発信することが大切です。" },
+      { question: "人工知能だけを扱う必要がありますか？", answer: "人工知能を、サービス品質、顧客の信頼、業務、事業成長などの実際の課題と関連付けることで、より役立つ情報になります。" },
     ],
-    related: [
-      {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "Understand how AI helps across operations, service, and growth goals.",
-      },
-      {
-        slug: "how-ai-chatbots-help-businesses",
-        title: "How AI Chatbots Help Businesses",
-        description: "Learn the practical business cases behind chatbot adoption.",
-      },
-      {
-        slug: "ai-customer-support-for-small-businesses",
-        title: "AI Customer Support for Small Businesses",
-        description: "A closer look at how AI supports service teams and lean operations.",
-      },
+    [
+      { slug: "ai-solutions-for-muslim-businesses", title: "ムスリム事業者向け人工知能活用", description: "事業上の課題を支援する人工知能活用の全体像をご紹介します。" },
+      { slug: "ai-customer-support-for-small-businesses", title: "中小事業者向け人工知能顧客サポート", description: "顧客対応やサポート業務の流れを改善する方法です。" },
+      { slug: "how-ai-chatbots-help-businesses", title: "人工知能チャットボットの事業活用", description: "チャットボットや人工知能サポートの実用的な効果を解説します。" },
     ],
-  },
-  {
-    slug: "ai-customer-support-for-small-businesses",
-    title: "AI Customer Support for Small Businesses | Propivotal Solutions",
-    description:
-      "Discover how AI customer support can help small businesses answer enquiries faster, reduce admin, and maintain a more professional customer experience.",
-    h1: "AI customer support for small businesses that need faster, clearer communication",
-    intro:
-      "Small businesses often face a gap between rising customer expectations and limited team capacity. AI customer support can help bridge that gap by answering frequent questions, collecting enquiry details, and directing people to the right next step.",
-    sections: [
-      {
-        heading: "The problem small teams face",
-        text: [
-          "When a staff member is on a call, busy with a sale, or offline, customer enquiries can pile up. That often leads to slower replies and missed opportunities.",
-          "A customer support assistant can provide immediate responses to routine questions such as opening hours, product information, pricing, or how to request a quote.",
-        ],
-        bullets: [
-          "Respond to common questions instantly",
-          "Reduce missed opportunities and slow replies",
-          "Qualify leads before they reach a sales team",
-          "Give customers a professional first response",
-        ],
-      },
-      {
-        heading: "How support teams benefit",
-        text: [
-          "AI does not replace great service; it helps support teams focus on the conversations that need a human touch. This is especially useful for businesses that want a consistent customer Journey but do not want to scale costs quickly.",
-        ],
-      },
-      {
-        heading: "A realistic implementation path",
-        text: [
-          "The strongest results come from choosing a narrow set of customer questions and designing the conversation to be accurate, helpful, and easy to follow. A business can then expand gradually as it learns from real customer enquiries.",
-        ],
-      },
-    ],
-    faqs: [
-      {
-        question: "Is AI customer support only for large businesses?",
-        answer:
-          "No. Small businesses often benefit most because they can improve response speed and consistency without hiring a large support team.",
-      },
-      {
-        question: "Can it hand off to a person?",
-        answer:
-          "Yes. A good customer support setup can pass complex or sensitive enquiries to staff with the full context already collected.",
-      },
-      {
-        question: "Does it help with lead generation?",
-        answer:
-          "Yes, it can gather customer details, qualify the enquiry, and guide prospects toward the next step in the sales or service process.",
-      },
-    ],
-    related: [
-      {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "A broader view of AI use across service, operations, and growth.",
-      },
-      {
-        slug: "how-ai-chatbots-help-businesses",
-        title: "How AI Chatbots Help Businesses",
-        description: "A practical explanation of what AI chatbots can and cannot do effectively.",
-      },
-      {
-        slug: "multilingual-ai-website-assistants",
-        title: "Multilingual AI Website Assistants",
-        description: "Support customers in more than one language without complicated manual work.",
-      },
-    ],
-  },
-  {
-    slug: "multilingual-ai-website-assistants",
-    title: "Multilingual AI Website Assistants | Propivotal Solutions",
-    description:
-      "Learn how multilingual AI website assistants help businesses serve customers in more than one language and answer enquiries more consistently.",
-    h1: "Multilingual AI website assistants for businesses serving diverse audiences",
-    intro:
-      "Businesses that serve diverse communities often struggle to provide quick answers in more than one language. A multilingual AI website assistant can help visitors get information in their preferred language while maintaining a helpful, professional tone.",
-    sections: [
-      {
-        heading: "Why multilingual support matters",
-        text: [
-          "Customers often browse or enquire in the language they are most comfortable with. When a website fails to answer in that language, businesses can lose trust or miss enquiries altogether.",
-          "AI assistants can provide consistent service in multiple languages without requiring a large support staff to answer every question manually.",
-        ],
-        bullets: [
-          "Support customers in English, Arabic, Urdu, Malay, and more",
-          "Improve trust among international and multilingual visitors",
-          "Help staff handle more conversations with less friction",
-          "Deliver a clearer experience on website enquiry flows",
-        ],
-      },
-      {
-        heading: "Where this creates value",
-        text: [
-          "This is especially useful for businesses working with local communities, family groups, or international customers who need clear information about products, services, halal standards, or booking details.",
-          "The key is to keep the content accurate and useful, not just translated mechanically.",
-        ],
-      },
-      {
-        heading: "Good multilingual design",
-        text: [
-          "A successful multilingual assistant includes a clear language switcher, accurate service information, and consistent handoff rules for questions that need a human response.",
-          "This gives businesses a more polished customer experience and reduces confusion in complex conversations.",
-        ],
-      },
-    ],
-    faqs: [
-      {
-        question: "Which languages can a multilingual assistant support?",
-        answer:
-          "It depends on the content and setup, but common examples include English, Arabic, Malay, Urdu, Hindi, Japanese, French, and Turkish.",
-      },
-      {
-        question: "Does translation alone make the experience good?",
-        answer:
-          "Not necessarily. The assistant must also understand local context, common customer questions, and service outcomes to be genuinely helpful.",
-      },
-      {
-        question: "Can this help with sales and enquiry capture?",
-        answer:
-          "Yes. It can guide visitors, collect contact details, and ask useful qualifying questions before a person follows up.",
-      },
-    ],
-    related: [
-      {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "A practical overview of AI adoption for Muslim-owned businesses.",
-      },
-      {
-        slug: "ai-chatbots-for-halal-restaurants",
-        title: "AI Chatbots for Halal Restaurants",
-        description: "How restaurants can serve multilingual customers more clearly and efficiently.",
-      },
-      {
-        slug: "how-ai-chatbots-help-businesses",
-        title: "How AI Chatbots Help Businesses",
-        description: "Explore the common business triggers for chatbot adoption and automation.",
-      },
-    ],
-  },
-  {
-    slug: "how-ai-chatbots-help-businesses",
-    title: "How AI Chatbots Help Businesses | Propivotal Solutions",
-    description:
-      "Understand how AI chatbots help businesses improve customer support, reduce repetitive tasks, and capture more qualified enquiry opportunities.",
-    h1: "How AI chatbots help businesses improve service and efficiency",
-    intro:
-      "AI chatbots are not a magic shortcut, but they can help businesses handle routine customer questions faster and more consistently. They are most useful when they are built around real customer needs and staff workflows.",
-    sections: [
-      {
-        heading: "Faster first responses",
-        text: [
-          "Customers often expect a quick reply when they visit a website or send a message. A chatbot can provide immediate answers to common questions while staff are busy or offline.",
-          "That often improves the customer experience and reduces the chance that a potential lead disappears before a human reply is sent.",
-        ],
-        bullets: [
-          "Handle frequent questions instantly",
-          "Keep the website active after hours",
-          "Collect details before a team member follows up",
-          "Increase response consistency",
-        ],
-      },
-      {
-        heading: "Lower-pressure support for teams",
-        text: [
-          "AI helps reduce repetitive tasks, which can free staff to focus on complex customer conversations and higher-value work. This is especially useful in small or growing businesses that need structure without adding unnecessary overhead.",
-        ],
-      },
-      {
-        heading: "A measured, business-focused approach",
-        text: [
-          "The strongest chatbot strategy is not about replacing every human interaction. It is about creating clear, useful support that reduces friction and gives teams a better foundation for follow-up and service quality.",
-        ],
-      },
-    ],
-    faqs: [
-      {
-        question: "Are AI chatbots suitable for every business?",
-        answer:
-          "They are best suited for businesses with repeat questions, lead generation needs, or service journeys that benefit from quick responses. They can be designed to fit the size and complexity of the business.",
-      },
-      {
-        question: "Does a chatbot replace customer support?",
-        answer:
-          "No. It works best as a support layer that handles common questions and routes more complex conversations to a person when needed.",
-      },
-      {
-        question: "How long does implementation usually take?",
-        answer:
-          "It depends on the business, the content, and the complexity of the workflows. A focused first phase usually begins with the highest-volume questions and the most valuable customer journeys.",
-      },
-    ],
-    related: [
-      {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "A strong starting point for understanding AI potential for Muslim-owned businesses.",
-      },
-      {
-        slug: "ai-customer-support-for-small-businesses",
-        title: "AI Customer Support for Small Businesses",
-        description: "How AI support can help lean teams improve consistency and response speed.",
-      },
-      {
-        slug: "ai-assistants-for-muslim-shops",
-        title: "AI Assistants for Muslim Shops",
-        description: "A practical view of AI support for stores and retail customer service.",
-      },
-    ],
-  },
-  {
-    slug: "blog",
-    title: "AI Blog for Muslim Businesses | Propivotal Solutions",
-    description:
-      "Read practical SEO, AI, and customer service articles for Muslim businesses, halal restaurants, and small business owners who want clear growth guidance.",
-    h1: "AI and business growth insights for Muslim entrepreneurs",
-    intro:
-      "This blog brings together practical guidance on AI, customer support, digital growth, and service design for Muslim-owned businesses. The goal is to help business owners make better decisions without hype or shortcuts.",
-    sections: [
-      {
-        heading: "What readers can expect",
-        text: [
-          "The articles are written for business owners who want clear, actionable information about AI adoption, customer experience, digital discovery, and service operations.",
-          "Topics cover both strategic thinking and practical questions that arise when a small team wants to improve response speed without adding unnecessary complexity.",
-        ],
-        bullets: [
-          "AI use cases for service-based businesses",
-          "How to improve customer experience online",
-          "Business content strategies that support search visibility",
-          "Tools that help small teams work more efficiently",
-        ],
-      },
-      {
-        heading: "Suggested article topics",
-        text: [
-          "Popular topics include how AI chatbots help businesses answer enquiries faster, how multilingual assistants improve customer trust, and how halal businesses can use clearer service information to support customer decisions.",
-          "The content strategy focuses on real customer intent rather than mass-produced low-value pages.",
-        ],
-      },
-      {
-        heading: "A sustainable content approach",
-        text: [
-          "Good business content should be specific, useful, and easy to understand. The plan is to publish a small number of genuinely helpful articles, keep them updated, and make sure they answer the real questions people ask when researching business tools and digital support.",
-        ],
-      },
-    ],
-    faqs: [
-      {
-        question: "What type of blog content is useful for business owners?",
-        answer:
-          "Helpful articles answer practical questions about AI tools, customer experience, multilingual support, and service operations without making unrealistic promises.",
-      },
-      {
-        question: "How often should the blog be updated?",
-        answer:
-          "A consistent, modest cadence is better than mass-producing weak content. A steady rhythm of useful articles builds trust and authority over time.",
-      },
-      {
-        question: "Does the blog need to focus only on AI?",
-        answer:
-          "It should connect AI with real business priorities such as service quality, customer trust, operations, and growth. That makes the content useful for owners and easier to discover through search.",
-      },
-    ],
-    related: [
-      {
-        slug: "ai-solutions-for-muslim-businesses",
-        title: "AI Solutions for Muslim Businesses",
-        description: "A general overview of the business problems AI is designed to support.",
-      },
-      {
-        slug: "ai-customer-support-for-small-businesses",
-        title: "AI Customer Support for Small Businesses",
-        description: "A practical overview of service operations and support workflows.",
-      },
-      {
-        slug: "how-ai-chatbots-help-businesses",
-        title: "How AI Chatbots Help Businesses",
-        description: "Understand the real business value behind chatbot adoption and AI support.",
-      },
-    ],
-  },
+  ),
 ];

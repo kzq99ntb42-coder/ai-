@@ -3,7 +3,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { validateContactSubmission } from "./validation.js";
+import { escapeHtml, validateContactSubmission } from "./validation.js";
 
 dotenv.config();
 
@@ -26,33 +26,37 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true,
   message: {
-    message: "Too many contact attempts. Please wait 15 minutes before trying again.",
+    message: "お問い合わせが続いています。15分ほどお待ちのうえ、再度お試しください。",
   },
 });
 
 app.use("/api", apiLimiter);
 
 app.get("/api/health", (_request, response) => {
-  response.json({ ok: true, service: "contact-api" });
+  response.json({ ok: true, service: "お問い合わせ受付API" });
 });
 
 app.post("/api/contact", async (request, response) => {
   const body = request.body || {};
 
   if (typeof body.website === "string" && body.website.trim() !== "") {
-    return response.status(400).json({ message: "Submission rejected." });
+    return response.status(400).json({ message: "送信内容を確認できませんでした。" });
   }
 
   const validation = validateContactSubmission(body);
 
   if (!validation.valid) {
     return response.status(400).json({
-      message: "Please review the form and try again.",
+      message: "入力内容をご確認のうえ、もう一度お試しください。",
       errors: validation.errors,
     });
   }
 
   const { name, company, email, message } = validation.clean;
+  const safeName = escapeHtml(name);
+  const safeCompany = escapeHtml(company);
+  const safeEmail = escapeHtml(email);
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br />");
   const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
   const smtpPort = Number(process.env.SMTP_PORT || 587);
   const smtpUser = process.env.SMTP_USER;
@@ -62,7 +66,7 @@ app.post("/api/contact", async (request, response) => {
 
   if (!smtpUser || !smtpPass) {
     return response.status(503).json({
-      message: "Email delivery is not configured yet. Add your SMTP credentials to the environment variables.",
+      message: "メール送信の設定が完了していません。時間をおいてから再度お試しください。",
     });
   }
 
@@ -75,52 +79,64 @@ app.post("/api/contact", async (request, response) => {
         user: smtpUser,
         pass: smtpPass,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
     });
 
     await transporter.sendMail({
       from: mailFrom,
       to: mailTo,
       replyTo: email,
-      subject: `New enquiry from ${name} (${company})`,
+      subject: `ウェブサイトからのお問い合わせ：${name}様（${company}）`,
       text: [
-        `Name: ${name}`,
-        `Company: ${company}`,
-        `Email: ${email}`,
+        `お名前：${name}`,
+        `会社名：${company}`,
+        `メールアドレス：${email}`,
         "",
-        "Message:",
+        "お問い合わせ内容：",
         message,
       ].join("\n"),
       html: `
-        <h2>New enquiry</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, "<br />")}</p>
+        <h2>ウェブサイトからのお問い合わせ</h2>
+        <p><strong>お名前：</strong>${safeName}</p>
+        <p><strong>会社名：</strong>${safeCompany}</p>
+        <p><strong>メールアドレス：</strong>${safeEmail}</p>
+        <p><strong>お問い合わせ内容：</strong></p>
+        <p>${safeMessage}</p>
       `,
     });
 
     return response.status(200).json({
-      message: "Thank you. Your enquiry has been sent.",
+      message: "お問い合わせを送信しました。ありがとうございます。",
     });
   } catch (error) {
-    console.error("Email delivery failed:", error);
+    console.error("お問い合わせメールの送信に失敗しました。", error?.code ?? "UNKNOWN");
     return response.status(500).json({
-      message: "We could not send your message right now. Please try again later.",
+      message: "現在、メッセージを送信できません。時間をおいてから再度お試しください。",
     });
   }
 });
 
 app.use((_request, response) => {
-  response.status(404).json({ message: "Not found." });
+  response.status(404).json({ message: "ページが見つかりません。" });
+});
+
+app.use((error, _request, response, next) => {
+  if (error?.type === "entity.parse.failed") {
+    return response.status(400).json({ message: "送信内容を正しく読み取れませんでした。" });
+  }
+
+  if (error?.type === "entity.too.large") {
+    return response.status(413).json({ message: "送信内容が大きすぎます。" });
+  }
+
+  console.error("API処理中に予期しないエラーが発生しました。", error?.code ?? "UNKNOWN");
+  return response.status(500).json({
+    message: "現在、処理を完了できません。時間をおいてから再度お試しください。",
+  });
 });
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
-    console.log(`Contact API listening on http://localhost:${PORT}`);
+    console.log(`お問い合わせ受付APIを起動しました：http://localhost:${PORT}`);
   });
 }
 

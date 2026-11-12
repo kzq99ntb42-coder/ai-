@@ -1,6 +1,17 @@
+# Dependencies and generated output
 node_modules/
 dist/
 *.tsbuildinfo
+
+# Local environment files
 .env
 .env.*
 !.env.example
+!**/.env.example
+
+# Private keys and local package credentials
+*.key
+*.pem
+*.p12
+*.pfx
+.npmrc

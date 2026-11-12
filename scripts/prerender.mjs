@@ -9,51 +9,54 @@ const siteUrl = (process.env.VITE_SITE_URL || env.VITE_SITE_URL || "https://musl
 const vite = await createServer({ mode: "production", server: { middlewareMode: true }, appType: "custom" });
 
 try {
-  const [{ default: App }, { locales, rtlLocales }, { presentation }] = await Promise.all([
+  const [{ default: App }, { presentation }, { seoPageRoutes }] = await Promise.all([
     vite.ssrLoadModule("/src/App.tsx"),
-    vite.ssrLoadModule("/src/content.ts"),
     vite.ssrLoadModule("/src/presentation.ts"),
+    vite.ssrLoadModule("/src/seoPages.ts"),
   ]);
   const template = await readFile(`${root}/dist/index.html`, "utf8");
   const xmlEscape = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&apos;");
-  const languages = locales.map((locale) => `<link rel="alternate" hreflang="${locale}" href="${siteUrl}/${locale}/" />`);
-  languages.push(`<link rel="alternate" hreflang="x-default" href="${siteUrl}/en/" />`);
 
-  const renderPage = (locale) => {
-    const copy = presentation[locale];
-    const html = renderToString(createElement(App, { locale }));
-    let page = template
-      .replace(/<html\b[^>]*>/, `<html lang="${locale}" dir="${rtlLocales.includes(locale) ? "rtl" : "ltr"}">`)
-      .replace(/<title>.*?<\/title>/s, `<title>${xmlEscape(copy.seoTitle)}</title>`)
-      .replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${xmlEscape(copy.seoDescription)}" />`)
-      .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${xmlEscape(copy.seoTitle)}" />`)
-      .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${xmlEscape(copy.seoDescription)}" />`)
+  const renderPage = (route) => {
+    const copy = presentation.ja;
+    const pageCopy = route ? seoPageRoutes.find((item) => item.slug === route) : null;
+    const title = pageCopy?.title ?? copy.seoTitle;
+    const description = pageCopy?.description ?? copy.seoDescription;
+    const canonicalUrl = route ? `${siteUrl}/${route}` : `${siteUrl}/`;
+    const html = renderToString(createElement(App, { locale: "ja", route }));
+
+    return template
+      .replace(/<html\b[^>]*>/, '<html lang="ja" dir="ltr">')
+      .replace(/<title>.*?<\/title>/s, `<title>${xmlEscape(title)}</title>`)
+      .replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${xmlEscape(description)}" />`)
+      .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${xmlEscape(title)}" />`)
+      .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${xmlEscape(description)}" />`)
       .replace(/<meta property="og:image" content="[^"]*"\s*\/?>/, `<meta property="og:image" content="${siteUrl}/images/geometric-arch.jpg" />`)
-      .replace("</head>", `<link rel="canonical" href="${siteUrl}/${locale}/" /><meta property="og:url" content="${siteUrl}/${locale}/" /><meta property="og:locale" content="${locale.replace("-", "_")}" />${languages.join("")}</head>`)
+      .replace("</head>", `<link rel="canonical" href="${canonicalUrl}" /><meta property="og:url" content="${canonicalUrl}" /></head>`)
       .replace('<div id="root"></div>', `<div id="root">${html}</div>`);
-    return page;
   };
 
-  const sitemapUrls = locales.map((locale) => {
-    const alternates = locales.map((alternate) => `    <xhtml:link rel="alternate" hreflang="${alternate}" href="${siteUrl}/${alternate}/" />`);
-    alternates.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${siteUrl}/en/" />`);
-    return `  <url>\n    <loc>${siteUrl}/${locale}/</loc>\n${alternates.join("\n")}\n  </url>`;
-  });
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${sitemapUrls.join("\n")}\n</urlset>\n`;
-
-  for (const locale of locales) {
-    const directory = `${root}/dist/${locale}`;
+  await writeFile(`${root}/dist/index.html`, renderPage());
+  for (const route of seoPageRoutes) {
+    const directory = `${root}/dist/${route.slug}`;
     await mkdir(directory, { recursive: true });
-    await writeFile(`${directory}/index.html`, renderPage(locale));
+    await writeFile(`${directory}/index.html`, renderPage(route.slug));
   }
-  await writeFile(`${root}/dist/index.html`, renderPage("en"));
-  await writeFile(`${root}/dist/_redirects`, [
-    ...locales.map((locale) => `/${locale} /${locale}/ 301`),
-    "",
-  ].join("\n"));
+
+  const urls = ["", ...seoPageRoutes.map((route) => route.slug)]
+    .map((route) => `  <url><loc>${xmlEscape(route ? `${siteUrl}/${route}` : `${siteUrl}/`)}</loc></url>`)
+    .join("\n");
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+  const legacyLocales = ["en", "ar", "zh", "hi", "es", "fr", "bn", "pt", "ru", "ur", "uz", "id", "ms", "tr", "ja"];
+  const redirects = legacyLocales.flatMap((locale) => [
+    `/${locale} / 301`,
+    `/${locale}/ / 301`,
+    `/${locale}/* /:splat 301`,
+  ]);
+  await writeFile(`${root}/dist/_redirects`, `${redirects.join("\n")}\n`);
   await writeFile(`${root}/dist/sitemap.xml`, sitemap);
   await writeFile(`${root}/dist/robots.txt`, `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
-  console.log(`Pre-rendered ${locales.length} localized pages for ${siteUrl}`);
+  console.log(`日本語ページ${seoPageRoutes.length + 1}件を生成しました：${siteUrl}`);
 } finally {
   await vite.close();
 }
