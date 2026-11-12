@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { getInitialLocale, locales, type Locale } from "./content";
 import { presentation } from "./presentation";
 import PatternCanvas from "./PatternCanvas";
@@ -277,7 +277,6 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
   const activeLocale = locale;
   const { page } = getResolvedSeoPage(activeLocale, route);
   const copy = presentation[activeLocale];
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const pageUrl = `${SITE_URL}/`;
   const structuredData = {
     "@context": "https://schema.org",
@@ -309,40 +308,6 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
       },
     ],
   };
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const source = video?.querySelector("source");
-    if (!video || !source) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-          if (!source.src && source.dataset.src) {
-            source.src = source.dataset.src;
-            video.preload = "auto";
-            video.load();
-          }
-          video.play().catch((error: unknown) => {
-            if (error instanceof DOMException && error.name === "AbortError") return;
-            console.error("紹介動画を再生できませんでした。", error);
-          });
-        } else if (!video.paused) {
-          video.pause();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     const pageMetaTitle = page ? page.title : copy.seoTitle;
@@ -399,16 +364,15 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
         <section className="about-section" id="about">
           <div className="about-art" aria-hidden="true">
             <video
-              ref={videoRef}
               className="about-video"
-              autoPlay={false}
+              autoPlay
               muted
               loop
               playsInline
-              preload="none"
+              preload="auto"
               poster="/images/geometric-arch.jpg"
             >
-              <source data-src="/videos/hero-video.mp4" type="video/mp4" />
+              <source src="/videos/hero-video.mp4" type="video/mp4" />
             </video>
           </div>
           <div className="about-copy">
