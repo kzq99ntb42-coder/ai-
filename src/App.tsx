@@ -446,7 +446,7 @@ function App({ locale = getInitialLocale(), route }: { locale?: Locale; route?: 
         </section>
       </main>
 
-      <footer className="site-footer">
+      <footer className="site-footer home-footer">
         <a className="company-brand footer-company-brand" href="/">
           <span className="brand-mark">ム</span>
           <span className="company-brand-copy">
